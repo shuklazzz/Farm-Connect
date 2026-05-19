@@ -1,86 +1,121 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getIcon } from '../utils/helpers';
+
+const StarIcon = ({ className }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+    <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
+  </svg>
+);
 
 const ProductCard = ({ product, cartItem, onAdd, onRemove }) => {
   const quantity = cartItem ? cartItem.quantity : 0;
+  const navigate = useNavigate();
+
+  const handleCardClick = (e) => {
+    // Prevent navigation if the user clicked the add/remove buttons
+    if (e.target.closest('button')) return;
+    navigate(`/product/${product._id}`);
+  };
 
   return (
-    <div className="bg-white p-3 rounded-2xl shadow-sm border border-green-50 flex flex-col justify-between h-full hover:shadow-lg hover:border-green-200 transition-all duration-300 relative group overflow-hidden">
+    <div 
+        onClick={handleCardClick}
+        className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between h-full transition-all duration-500 relative group cursor-pointer hover:scale-[1.03] hover:shadow-2xl hover:border-green-200 overflow-hidden"
+    >
       
-      {/* Subtle Green Glow Background Effect */}
-      <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-green-50 to-transparent opacity-50 z-0"></div>
-
-      {/* Image / Icon Area */}
-      <div className="bg-white rounded-xl h-36 flex items-center justify-center mb-3 relative z-10 border border-green-50/50 shadow-inner group-hover:scale-[1.02] transition-transform duration-300 overflow-hidden">
+      {/* Top Image Section - Highly Interactive */}
+      <div className="relative h-48 w-full bg-gray-50 overflow-hidden">
         {product.imageUrl ? (
             <img 
                 src={product.imageUrl} 
                 alt={product.name} 
-                className="w-full h-full object-cover transform transition-transform group-hover:scale-110 duration-500"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
         ) : (
-            <div className="text-7xl transform transition-transform group-hover:scale-110 duration-300 drop-shadow-sm">
+            <div className="w-full h-full flex items-center justify-center text-7xl transition-transform duration-700 group-hover:scale-110 opacity-70">
                 {getIcon(product.category)}
             </div>
         )}
-        
+
+        {/* Badges */}
         {product.isImperfect && (
-            <span className="absolute top-2 left-2 bg-yellow-100 text-yellow-800 border border-yellow-200 text-[10px] font-bold px-2 py-1 rounded-lg uppercase tracking-wide flex items-center gap-1 z-20 shadow-sm">
-                <span>🌱</span> Imperfect
+            <span className="absolute top-3 left-3 bg-yellow-400/90 backdrop-blur-sm text-yellow-900 text-[10px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider z-20 shadow-sm">
+                Imperfect
             </span>
         )}
-      </div>
 
-      {/* Content */}
-      <div className="flex-1 flex flex-col z-10">
-        <div className="flex items-center justify-between mb-1">
-            <div className="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-md">
-                {product.quantity} {product.unit}
-            </div>
-            <div className="text-[10px] font-medium text-gray-400">
-                Fresh Farm
+        <span className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-green-700 text-[10px] font-black px-2.5 py-1 rounded-md shadow-sm border border-white/50 z-20">
+            {product.quantity} {product.unit}
+        </span>
+
+        {/* --- PREMIUM GLASSMORPHISM HOVER OVERLAY --- */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 flex flex-col justify-end p-4">
+            <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">
+                <div className="flex items-center gap-1.5 mb-1.5">
+                    <StarIcon className="w-5 h-5 text-yellow-400 drop-shadow-md" />
+                    <span className="text-white font-bold text-lg drop-shadow-md">{product.averageRating ? product.averageRating.toFixed(1) : 'New'}</span>
+                    <span className="text-gray-300 text-xs font-medium ml-1">({product.numReviews || 0} reviews)</span>
+                </div>
+                
+                <p className="text-gray-200 text-xs line-clamp-2 leading-relaxed mb-3">
+                    Premium quality {product.category.toLowerCase()} sourced directly from {product.farmerId?.name?.split(' ')[0] || 'our'} farms. Click to read verified reviews!
+                </p>
+
+                <div className="inline-flex items-center justify-center w-full bg-white/20 hover:bg-white/30 backdrop-blur-md text-white text-xs font-bold py-2 rounded-lg border border-white/20 transition-colors">
+                    View Full Details
+                </div>
             </div>
         </div>
+      </div>
+
+      {/* Bottom Content Section */}
+      <div className="p-4 flex-1 flex flex-col z-20 bg-white">
         
-        <h3 className="text-gray-900 font-extrabold text-base leading-tight mb-1 line-clamp-2 tracking-tight">
-            {product.name}
-        </h3>
-        <div className="flex flex-col gap-1 mb-4">
-            <div className="text-xs text-gray-500 flex items-center gap-1">
-                <span>👨‍🌾</span> {product.farmerId?.name?.split(' ')[0] || 'Local Farmer'}
-            </div>
+        <div className="flex justify-between items-start mb-1">
+            <h3 className="text-gray-900 font-bold text-lg leading-tight line-clamp-1 group-hover:text-green-600 transition-colors">
+                {product.name}
+            </h3>
+        </div>
+
+        <div className="text-xs text-gray-500 flex items-center gap-1.5 mb-4">
+            <span>👨‍🌾</span> {product.farmerId?.name?.split(' ')[0] || 'Local Farmer'}
             {product.farmerId?.location?.city && (
-                <div className="text-[10px] text-gray-400 flex items-center gap-1 font-medium bg-gray-50 max-w-fit px-1.5 py-0.5 rounded border border-gray-100">
-                    <span>📍</span> From {product.farmerId.location.city}
-                </div>
+                <>
+                    <span className="text-gray-300">•</span>
+                    <span>📍 {product.farmerId.location.city}</span>
+                </>
             )}
         </div>
         
-        {/* Price & Action Footer */}
+        {/* Footer: Price & Add Button */}
         <div className="mt-auto flex items-center justify-between">
-            <div className="flex flex-col">
-                <span className="text-lg font-black text-gray-900">₹{product.price}</span>
+            <div className="flex items-baseline gap-1">
+                <span className="text-xl font-black text-gray-900 tracking-tight">₹{product.price}</span>
             </div>
 
             {quantity === 0 ? (
                 <button 
-                    onClick={() => onAdd(product)}
-                    className="bg-white text-green-700 border-2 border-green-600 text-xs font-bold px-5 py-2 rounded-xl uppercase hover:bg-green-600 hover:text-white transition-all shadow-sm hover:shadow-green-200 active:scale-95"
+                    onClick={(e) => { e.stopPropagation(); onAdd(product); }}
+                    className="bg-green-50 text-green-700 border border-green-200 text-sm font-bold px-4 py-1.5 rounded-lg hover:bg-green-600 hover:text-white hover:border-green-600 transition-all active:scale-95 shadow-sm"
                 >
                     ADD
                 </button>
             ) : (
-                <div className="flex items-center bg-green-600 text-white rounded-xl overflow-hidden shadow-md border border-green-700">
+                <div 
+                    className="flex items-center bg-green-600 text-white rounded-lg shadow-md border border-green-700 h-9"
+                    onClick={(e) => e.stopPropagation()}
+                >
                     <button 
                         onClick={() => onRemove(product)}
-                        className="px-3 py-1.5 hover:bg-green-700 transition-colors active:bg-green-800 font-bold"
+                        className="px-3 h-full hover:bg-green-700 transition-colors active:bg-green-800 font-bold text-lg rounded-l-lg flex items-center justify-center"
                     >
-                        -
+                        −
                     </button>
-                    <span className="text-sm font-bold px-2 min-w-[24px] text-center bg-green-600">{quantity}</span>
+                    <span className="text-sm font-bold px-2 min-w-[28px] text-center">{quantity}</span>
                     <button 
                         onClick={() => onAdd(product)}
-                        className="px-3 py-1.5 hover:bg-green-700 transition-colors active:bg-green-800 font-bold"
+                        className="px-3 h-full hover:bg-green-700 transition-colors active:bg-green-800 font-bold text-lg rounded-r-lg flex items-center justify-center"
                     >
                         +
                     </button>

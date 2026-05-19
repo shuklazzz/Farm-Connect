@@ -211,6 +211,10 @@ export const productAPI = {
     return apiCall(`/api/products/all?_t=${timestamp}`);
   },
 
+  getById: async (productId) => {
+    return apiCall(`/api/products/${productId}`);
+  },
+
   getByFarmer: async (farmerId) => {
     // Add cache-busting timestamp to force fresh data
     const timestamp = new Date().getTime();
@@ -229,6 +233,20 @@ export const productAPI = {
       method: 'DELETE',
     });
   },
+};
+
+// Review API
+export const reviewAPI = {
+  getByProduct: async (productId) => {
+    return apiCall(`/api/products/${productId}/reviews`);
+  },
+  
+  create: async (productId, reviewData) => {
+    return apiCall(`/api/products/${productId}/reviews`, {
+      method: 'POST',
+      body: JSON.stringify(reviewData),
+    });
+  }
 };
 
 // Market Price API

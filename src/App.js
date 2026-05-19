@@ -13,6 +13,7 @@ const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const MyOrders = lazy(() => import('./pages/MyOrders'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
 const Profile = lazy(() => import('./pages/Profile'));
+const ProductDetails = lazy(() => import('./pages/ProductDetails'));
 
 // Loading Fallback Component
 const LoadingFallback = () => (
@@ -31,7 +32,15 @@ function App() {
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
               <Route path="/" element={<BuyerDashboard />} />
-              <Route path="/orders" element={<MyOrders />} /> {/* New Route */}
+              <Route path="/product/:id" element={<ProductDetails />} />
+              <Route 
+                path="/orders" 
+                element={
+                  <ProtectedRoute>
+                    <MyOrders />
+                  </ProtectedRoute>
+                } 
+              />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/login" element={<Login />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -51,8 +60,6 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              {/* Buyer Dashboard is now public, effectively the "Home" page */}
-              <Route path="/buyer-dashboard" element={<BuyerDashboard />} />
               <Route
                 path="/admin-dashboard"
                 element={

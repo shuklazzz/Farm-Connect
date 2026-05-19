@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { productAPI, marketPriceAPI } from '../services/api';
-import { getIncomingOrders } from '../services/orderApi';
 import Navbar from '../components/Navbar';
 import { getIcon } from '../utils/helpers';
 import ProductSuccessModal from '../components/ProductSuccessModal';
