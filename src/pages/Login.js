@@ -15,7 +15,7 @@ const Login = () => {
     if (isAuthenticated && user) {
         if (user.role === 'admin') navigate('/admin-dashboard', { replace: true });
         else if (user.role === 'farmer') navigate('/farmer-dashboard', { replace: true });
-        else navigate('/buyer-dashboard', { replace: true });
+        else navigate('/', { replace: true });
     }
   }, [user, isAuthenticated, navigate]);
 
@@ -53,7 +53,7 @@ const Login = () => {
       } else if (userRole === 'farmer') {
         navigate('/farmer-dashboard');
       } else {
-        navigate('/buyer-dashboard');
+        navigate('/');
       }
     } catch (error) {
       setError(error.message || 'Invalid credentials');

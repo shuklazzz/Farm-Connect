@@ -447,7 +447,7 @@ const BuyerDashboard = () => {
 
       {/* Geolocation Map */}
       <div className="max-w-7xl mx-auto px-4 mt-8 relative z-0">
-           <FarmerMap />
+           <FarmerMap buyerLocation={user?.location} />
       </div>
 
       {/* Sticky Filter Bar */}

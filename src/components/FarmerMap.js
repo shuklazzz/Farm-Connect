@@ -16,7 +16,14 @@ let DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const FarmerMap = () => {
+const buyerIcon = L.divIcon({
+    className: 'custom-div-icon',
+    html: "<div style='background-color:#3b82f6; width:16px; height:16px; border-radius:50%; border:3px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.5);'></div>",
+    iconSize: [16, 16],
+    iconAnchor: [8, 8]
+});
+
+const FarmerMap = ({ buyerLocation }) => {
   const [farmers, setFarmers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -56,14 +63,21 @@ const FarmerMap = () => {
        </div>
   );
 
-  if (farmers.length === 0) return (
+  const hasBuyerLocation = buyerLocation && buyerLocation.coordinates && buyerLocation.coordinates.lat;
+
+  if (farmers.length === 0 && !hasBuyerLocation) return (
        <div className="w-full py-12 rounded-2xl flex items-center justify-center bg-gray-50 border border-gray-100 mb-8">
            <span className="text-gray-500 font-medium">No active farms pinpointed yet. New farmers will appear here automatically! 🌾</span>
        </div>
   );
 
-  // Auto-center map on the first detected farmer
-  const center = [farmers[0].location.coordinates.lat, farmers[0].location.coordinates.lng];
+  // Auto-center map on buyer if available, else first detected farmer
+  let center = [20.5937, 78.9629]; // Default to India center
+  if (hasBuyerLocation) {
+      center = [buyerLocation.coordinates.lat, buyerLocation.coordinates.lng];
+  } else if (farmers.length > 0) {
+      center = [farmers[0].location.coordinates.lat, farmers[0].location.coordinates.lng];
+  }
 
   return (
     <div className="w-full h-[28rem] rounded-[2.5rem] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-white/50 relative z-0 mb-12 group">
@@ -72,6 +86,16 @@ const FarmerMap = () => {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
             />
+            {hasBuyerLocation && (
+                <Marker position={[buyerLocation.coordinates.lat, buyerLocation.coordinates.lng]} icon={buyerIcon}>
+                    <Popup className="rounded-2xl">
+                        <div className="text-center font-sans p-1">
+                            <strong className="text-blue-600 block text-base leading-tight mb-1">You are here</strong>
+                            <span className="text-xs text-gray-500">{buyerLocation.city || 'Your Location'}</span>
+                        </div>
+                    </Popup>
+                </Marker>
+            )}
             {farmers.map((farmer) => (
                 <Marker key={farmer._id} position={[farmer.location.coordinates.lat, farmer.location.coordinates.lng]}>
                     <Popup className="rounded-2xl">

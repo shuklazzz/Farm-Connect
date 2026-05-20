@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { getMyOrders } from '../services/orderApi';
 
@@ -41,7 +42,7 @@ const MyOrders = () => {
                 {orders.length === 0 ? (
                     <div className="text-center py-20 bg-white rounded-xl shadow-sm">
                         <p className="text-xl text-gray-500">No orders placed yet.</p>
-                        <a href="/buyer-dashboard" className="text-green-600 hover:underline mt-2 inline-block">Start Shopping</a>
+                        <Link to="/" className="text-green-600 hover:underline mt-2 inline-block">Start Shopping</Link>
                     </div>
                 ) : (
                     <div className="space-y-6">
